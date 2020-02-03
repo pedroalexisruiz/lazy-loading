@@ -22,7 +22,7 @@ public class MovingData {
 		ValidadorRequeridos.validateWorkDays(workdays, MovingData.INVALID_WORKDAYS);
 		ValidadorRequeridos.validateItemsPerDays(weightsPerItem, MovingData.INVALID_ITEMS_PER_DAY);
 		ValidadorRequeridos.validateWeightPerItem(weightsPerItem, MovingData.INVALID_WEIGHT_PER_ITEM);
-
+		this.cedula = cedula;
 		this.workdays = workdays;
 		this.weightsPerItem = weightsPerItem;
 	}

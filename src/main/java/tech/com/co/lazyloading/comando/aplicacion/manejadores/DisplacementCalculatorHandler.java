@@ -26,7 +26,6 @@ public class DisplacementCalculatorHandler implements CommandResponseHandler<Com
 
 	@Override
 	public CommandResponse<File> execute(CommandMovingData commandDisplacementData) {
-		System.out.println("En handler, " + commandDisplacementData);
 		MovingData movingData = this.movingDataFactory.create(commandDisplacementData);
 		DisplacementResult displacementResult = this.displacementsCalculatorService.registerMovingData(movingData);
 		return new CommandResponse<File>(this.movingDataFileManager.writeMovingDataReport(displacementResult));

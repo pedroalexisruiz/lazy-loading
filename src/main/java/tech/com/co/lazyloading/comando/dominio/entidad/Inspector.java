@@ -34,7 +34,7 @@ public class Inspector implements DisplacementsCalculatorService {
 	@Override
 	public DisplacementResult registerMovingData(MovingData movingData) {
 		List<Integer> weightsPerDay, weightsPerDayCopy;
-		int displacementsPerDayQuantity, previousWeight, weightPerItem;
+		int displacementsPerDayQuantity, previousWeight, weightPerItem, index;
 		List<DisplacementPerDay> displacementsPerDay = new ArrayList<>();
 		DisplacementResult result = new DisplacementResult(null, movingData.getCedula(),
 				this.dateGenerator.obtenerHoraLocalActual(), movingData.getWorkdays(), null);
@@ -52,9 +52,15 @@ public class Inspector implements DisplacementsCalculatorService {
 				weightPerItem = weightsPerDay.get(j) + previousWeight;
 
 				if (weightPerItem >= Inspector.MIN_WEIGHT) {
-					displacementsPerDayQuantity++;
-					previousWeight = 0;
-					weightsPerDayCopy.remove(weightPerItem);
+					index = weightsPerDayCopy.indexOf(weightPerItem);
+					if (index >= 0) {
+						displacementsPerDayQuantity++;
+						previousWeight = 0;
+						if (weightsPerDayCopy.size() > 0) {
+							weightsPerDayCopy.remove(index);
+						}
+					}
+
 				} else {
 					previousWeight = findBestWeightForGetTheMinimum(weightPerItem, i, weightsPerDayCopy);
 				}
@@ -62,7 +68,7 @@ public class Inspector implements DisplacementsCalculatorService {
 			displacementsPerDay.add(new DisplacementPerDay(null, result,
 					formatDisplacementDescription(i + 1, displacementsPerDayQuantity)));
 		}
-		
+
 		result.setDisplacementsPerDay(displacementsPerDay);
 		return result;
 	}
@@ -73,22 +79,25 @@ public class Inspector implements DisplacementsCalculatorService {
 
 	private int findBestWeightForGetTheMinimum(int currentWeight, int currentIndex, List<Integer> weights) {
 		int bestWeight = 101;
-		int aux;
+		int aux, index = -1;
 
 		for (int i = currentIndex + 1; i < weights.size(); i++) {
 			aux = currentWeight + weights.get(i);
 			if (aux >= Inspector.MIN_WEIGHT) {
 				if (Math.abs(aux - Inspector.MIN_WEIGHT) < Math.abs(bestWeight - Inspector.MIN_WEIGHT)) {
 					bestWeight = aux;
+					index = i;
+					break;
 				}
 			}
 		}
 
 		if (bestWeight == 101) {
-			bestWeight = weights.get(weights.size() - 1);
+			index = weights.size() - 1;
+			bestWeight = weights.get(index);
 		}
 
-		weights.remove(bestWeight);
+		weights.remove(index);
 
 		return bestWeight;
 	}
